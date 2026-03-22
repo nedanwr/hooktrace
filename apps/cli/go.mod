@@ -1,11 +1,13 @@
 module github.com/nedanwr/hooktrace/apps/cli
 
-go 1.25
+go 1.25.0
 
 require (
 	github.com/fatih/color v1.18.0
+	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/rs/zerolog v1.34.0
 	github.com/spf13/cobra v1.9.1
+	golang.org/x/net v0.52.0
 )
 
 require (
@@ -13,5 +15,5 @@ require (
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
-	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
 )
