@@ -11,16 +11,17 @@ import (
 )
 
 var (
-	headerColor = color.New(color.FgCyan, color.Bold)
-	methodColor = color.New(color.FgWhite, color.Bold)
-	pathColor   = color.New(color.FgWhite)
-	timeColor   = color.New(color.FgHiBlack)
-	idColor     = color.New(color.FgHiBlack)
-	successColor = color.New(color.FgGreen)
-	redirectColor = color.New(color.FgYellow)
+	headerColor    = color.New(color.FgCyan, color.Bold)
+	methodColor    = color.New(color.FgWhite, color.Bold)
+	pathColor      = color.New(color.FgWhite)
+	timeColor      = color.New(color.FgHiBlack)
+	idColor        = color.New(color.FgHiBlack)
+	successColor   = color.New(color.FgGreen)
+	redirectColor  = color.New(color.FgYellow)
 	clientErrColor = color.New(color.FgYellow, color.Bold)
 	serverErrColor = color.New(color.FgRed, color.Bold)
-	logoColor   = color.New(color.FgMagenta, color.Bold)
+	logoColor      = color.New(color.FgMagenta, color.Bold)
+	tunnelColor    = color.New(color.FgGreen, color.Bold)
 )
 
 // PrintBanner prints the HookTrace startup banner.
@@ -83,6 +84,13 @@ func statusColorFn(code int) *color.Color {
 	default:
 		return serverErrColor
 	}
+}
+
+// PrintTunnelStatus prints the tunnel URL when connection is established.
+func PrintTunnelStatus(publicURL string) {
+	fmt.Print("\r  Tunnel:        ")
+	tunnelColor.Printf("%s", publicURL)
+	fmt.Println()
 }
 
 func formatDuration(d time.Duration) string {
