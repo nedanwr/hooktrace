@@ -49,6 +49,9 @@ export default function Layout() {
               <NavLink to="/mock" active={location.pathname === "/mock"}>
                 Mock
               </NavLink>
+              <NavLink to="/diff" active={location.pathname.startsWith("/diff")}>
+                Diff
+              </NavLink>
             </nav>
           </div>
 
