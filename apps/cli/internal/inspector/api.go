@@ -7,7 +7,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/nedanwr/hooktrace/apps/cli/internal/diff"
 	"github.com/nedanwr/hooktrace/apps/cli/internal/replay"
+	"github.com/nedanwr/hooktrace/apps/cli/internal/signature"
 	"github.com/nedanwr/hooktrace/apps/cli/internal/store"
 )
 
@@ -35,6 +37,9 @@ func (a *API) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/mock", a.handleMock)
 	mux.HandleFunc("DELETE /api/requests", a.handleClearRequests)
 	mux.HandleFunc("GET /api/status", a.handleStatus)
+	mux.HandleFunc("GET /api/diff", a.handleDiff)
+	mux.HandleFunc("GET /api/requests/{id}/verify-signature", a.handleVerifySignature)
+	mux.HandleFunc("GET /api/signature/providers", a.handleSignatureProviders)
 }
 
 // handleListRequests returns the list of captured requests.
@@ -213,6 +218,99 @@ func (a *API) handleStatus(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]interface{}{
 		"requestCount": a.store.Count(),
 	})
+}
+
+// handleDiff compares two captured requests and returns a structured diff.
+// Query params: ?left=<id>&right=<id>
+func (a *API) handleDiff(w http.ResponseWriter, r *http.Request) {
+	leftID := r.URL.Query().Get("left")
+	rightID := r.URL.Query().Get("right")
+
+	if leftID == "" || rightID == "" {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "both 'left' and 'right' query params are required"})
+		return
+	}
+
+	left := a.store.Get(leftID)
+	if left == nil {
+		writeJSON(w, http.StatusNotFound, map[string]string{"error": "left request not found"})
+		return
+	}
+
+	right := a.store.Get(rightID)
+	if right == nil {
+		writeJSON(w, http.StatusNotFound, map[string]string{"error": "right request not found"})
+		return
+	}
+
+	result := diff.Diff(left, right)
+	writeJSON(w, http.StatusOK, result)
+}
+
+// handleVerifySignature verifies the webhook signature for a captured request.
+// Query params: ?provider=stripe&secret=whsec_...
+func (a *API) handleVerifySignature(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	provider := r.URL.Query().Get("provider")
+	secret := r.URL.Query().Get("secret")
+
+	if provider == "" {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "provider query param is required"})
+		return
+	}
+	if secret == "" {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "secret query param is required"})
+		return
+	}
+
+	req := a.store.Get(id)
+	if req == nil {
+		writeJSON(w, http.StatusNotFound, map[string]string{"error": "request not found"})
+		return
+	}
+
+	verifier, err := signature.GetProvider(provider)
+	if err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+		return
+	}
+
+	// Extract the signature header value from the captured request.
+	sigHeader := verifier.SignatureHeader()
+	sigValue := ""
+	if vals := req.Headers[sigHeader]; len(vals) > 0 {
+		sigValue = vals[0]
+	}
+	// Also check case-insensitive for common variations.
+	if sigValue == "" {
+		for k, vals := range req.Headers {
+			if strings.EqualFold(k, sigHeader) && len(vals) > 0 {
+				sigValue = vals[0]
+				break
+			}
+		}
+	}
+
+	result := verifier.Verify(req.Body, sigValue, secret)
+	writeJSON(w, http.StatusOK, result)
+}
+
+// handleSignatureProviders returns the list of available signature verification providers.
+func (a *API) handleSignatureProviders(w http.ResponseWriter, r *http.Request) {
+	type providerInfo struct {
+		Name   string `json:"name"`
+		Header string `json:"header"`
+	}
+
+	providers := signature.Providers()
+	info := make([]providerInfo, len(providers))
+	for i, p := range providers {
+		info[i] = providerInfo{
+			Name:   p.Name(),
+			Header: p.SignatureHeader(),
+		}
+	}
+	writeJSON(w, http.StatusOK, info)
 }
 
 func writeJSON(w http.ResponseWriter, status int, data interface{}) {
