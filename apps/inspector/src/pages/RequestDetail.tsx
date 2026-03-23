@@ -6,6 +6,7 @@ import { fetchRequest } from "~/lib/api";
 import StatusBadge from "~/components/StatusBadge";
 import HeadersTable from "~/components/HeadersTable";
 import BodyViewer from "~/components/BodyViewer";
+import ReplayPanel from "~/components/ReplayPanel";
 
 function formatDuration(ns: number): string {
   const ms = ns / 1_000_000;
@@ -14,11 +15,13 @@ function formatDuration(ns: number): string {
   return `${(ms / 1000).toFixed(1)}s`;
 }
 
+type Tab = "request" | "response" | "replay";
+
 export default function RequestDetail() {
   const { id } = useParams();
   const [request, setRequest] = useState<CapturedRequest | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [tab, setTab] = useState<"request" | "response">("request");
+  const [tab, setTab] = useState<Tab>("request");
   const [copiedId, setCopiedId] = useState(false);
 
   useEffect(() => {
@@ -38,7 +41,15 @@ export default function RequestDetail() {
             border: "1px solid var(--color-border)",
           }}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-red-400">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            className="text-red-400"
+          >
             <circle cx="12" cy="12" r="10" />
             <path d="m15 9-6 6M9 9l6 6" strokeLinecap="round" />
           </svg>
@@ -64,8 +75,7 @@ export default function RequestDetail() {
   }
 
   const statusCode = request.response?.statusCode ?? 0;
-  const requestContentType =
-    request.headers?.["Content-Type"]?.[0] ?? "";
+  const requestContentType = request.headers?.["Content-Type"]?.[0] ?? "";
   const responseContentType =
     request.response?.headers?.["Content-Type"]?.[0] ?? "";
   const path = request.query
@@ -89,6 +99,20 @@ export default function RequestDetail() {
     text: "#a1a1aa",
     bg: "rgba(161, 161, 170, 0.08)",
   };
+
+  const tabs: { id: Tab; label: string; extra?: React.ReactNode }[] = [
+    { id: "request", label: "Request" },
+    {
+      id: "response",
+      label: "Response",
+      extra: request.response ? (
+        <span className="ml-1.5 text-[11px] text-zinc-600">
+          {request.response.statusCode}
+        </span>
+      ) : undefined,
+    },
+    { id: "replay", label: "Replay" },
+  ];
 
   return (
     <div className="animate-fade-in">
@@ -141,7 +165,16 @@ export default function RequestDetail() {
               <StatusBadge statusCode={statusCode} size="md" />
 
               <div className="flex items-center gap-1.5 text-[12px] text-zinc-500">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <circle cx="12" cy="12" r="10" />
                   <polyline points="12 6 12 12 16 14" />
                 </svg>
@@ -149,7 +182,16 @@ export default function RequestDetail() {
               </div>
 
               <div className="flex items-center gap-1.5 text-[12px] text-zinc-500">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <rect width="18" height="18" x="3" y="4" rx="2" />
                   <path d="M16 2v4M8 2v4M3 10h18" />
                 </svg>
@@ -165,7 +207,16 @@ export default function RequestDetail() {
                   <span className="text-emerald-400">Copied!</span>
                 ) : (
                   <>
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                      width="11"
+                      height="11"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <rect width="14" height="14" x="8" y="8" rx="2" />
                       <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
                     </svg>
@@ -183,21 +234,19 @@ export default function RequestDetail() {
         className="flex gap-0 mb-5"
         style={{ borderBottom: "1px solid var(--color-border)" }}
       >
-        {(["request", "response"] as const).map((t) => (
+        {tabs.map((t) => (
           <button
-            key={t}
-            onClick={() => setTab(t)}
+            key={t.id}
+            onClick={() => setTab(t.id)}
             className={`relative px-4 py-2.5 text-[13px] font-medium transition-colors capitalize ${
-              tab === t ? "text-zinc-100" : "text-zinc-500 hover:text-zinc-300"
+              tab === t.id
+                ? "text-zinc-100"
+                : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
-            {t}
-            {t === "response" && request.response && (
-              <span className="ml-1.5 text-[11px] text-zinc-600">
-                {request.response.statusCode}
-              </span>
-            )}
-            {tab === t && (
+            {t.label}
+            {t.extra}
+            {tab === t.id && (
               <span className="absolute bottom-0 left-4 right-4 h-[2px] bg-violet-400 rounded-full" />
             )}
           </button>
@@ -208,7 +257,10 @@ export default function RequestDetail() {
       <div className="animate-fade-in space-y-5" key={tab}>
         {tab === "request" ? (
           <>
-            <Section title="Headers" count={Object.keys(request.headers ?? {}).length}>
+            <Section
+              title="Headers"
+              count={Object.keys(request.headers ?? {}).length}
+            >
               <HeadersTable headers={request.headers ?? {}} />
             </Section>
             <Section title="Body">
@@ -218,36 +270,52 @@ export default function RequestDetail() {
               />
             </Section>
           </>
-        ) : request.response ? (
-          <>
-            <Section title="Headers" count={Object.keys(request.response.headers ?? {}).length}>
-              <HeadersTable headers={request.response.headers ?? {}} />
-            </Section>
-            <Section title="Body">
-              <BodyViewer
-                body={request.response.body as unknown as string}
-                contentType={responseContentType}
-              />
-            </Section>
-          </>
-        ) : (
-          <div className="py-12 flex flex-col items-center gap-3">
-            <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center"
-              style={{
-                background: "var(--color-surface-overlay)",
-                border: "1px solid var(--color-border)",
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-zinc-600">
-                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
-                <path d="M12 8v4M12 16h.01" strokeLinecap="round" />
-              </svg>
+        ) : tab === "response" ? (
+          request.response ? (
+            <>
+              <Section
+                title="Headers"
+                count={Object.keys(request.response.headers ?? {}).length}
+              >
+                <HeadersTable headers={request.response.headers ?? {}} />
+              </Section>
+              <Section title="Body">
+                <BodyViewer
+                  body={request.response.body as unknown as string}
+                  contentType={responseContentType}
+                />
+              </Section>
+            </>
+          ) : (
+            <div className="py-12 flex flex-col items-center gap-3">
+              <div
+                className="w-10 h-10 rounded-lg flex items-center justify-center"
+                style={{
+                  background: "var(--color-surface-overlay)",
+                  border: "1px solid var(--color-border)",
+                }}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  className="text-zinc-600"
+                >
+                  <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                  <path d="M12 8v4M12 16h.01" strokeLinecap="round" />
+                </svg>
+              </div>
+              <p className="text-[13px] text-zinc-600">
+                No response received from target server
+              </p>
             </div>
-            <p className="text-[13px] text-zinc-600">
-              No response received from target server
-            </p>
-          </div>
+          )
+        ) : (
+          /* Replay tab */
+          <ReplayPanel request={request} />
         )}
       </div>
     </div>
