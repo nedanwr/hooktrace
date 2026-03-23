@@ -32,3 +32,45 @@ export async function fetchStatus(): Promise<{ requestCount: number }> {
   const res = await fetch(`${BASE}/api/status`);
   return res.json();
 }
+
+export interface ReplayPayload {
+  headers?: Record<string, string[]>;
+  body?: string; // base64-encoded
+}
+
+export async function replayRequest(
+  id: string,
+  payload?: ReplayPayload
+): Promise<CapturedRequest> {
+  const res = await fetch(`${BASE}/api/requests/${id}/replay`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload ?? {}),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || "Replay failed");
+  }
+  return res.json();
+}
+
+export interface MockPayload {
+  method: string;
+  path: string;
+  query?: string;
+  headers?: Record<string, string[]>;
+  body?: string; // base64-encoded
+}
+
+export async function sendMock(payload: MockPayload): Promise<CapturedRequest> {
+  const res = await fetch(`${BASE}/api/mock`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || "Mock failed");
+  }
+  return res.json();
+}
