@@ -4,6 +4,7 @@ import { useWebSocket } from "~/hooks/useWebSocket";
 import Layout from "~/components/Layout";
 import Dashboard from "~/pages/Dashboard";
 import RequestDetail from "~/pages/RequestDetail";
+import MockPage from "~/pages/MockPage";
 
 export default function App() {
   // Connect to the inspector WebSocket for live updates.
@@ -14,6 +15,7 @@ export default function App() {
       <Route element={<Layout />}>
         <Route index element={<Dashboard />} />
         <Route path="requests/:id" element={<RequestDetail />} />
+        <Route path="mock" element={<MockPage />} />
       </Route>
     </Routes>
   );
