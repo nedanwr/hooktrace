@@ -11,6 +11,7 @@ import (
 	"github.com/nedanwr/hooktrace/apps/cli/internal/config"
 	"github.com/nedanwr/hooktrace/apps/cli/internal/forward"
 	"github.com/nedanwr/hooktrace/apps/cli/internal/inspector"
+	"github.com/nedanwr/hooktrace/apps/cli/internal/replay"
 	"github.com/nedanwr/hooktrace/apps/cli/internal/store"
 	"github.com/nedanwr/hooktrace/apps/cli/internal/tunnel"
 	"github.com/nedanwr/hooktrace/apps/cli/internal/ui"
@@ -77,6 +78,19 @@ func runStart(cmd *cobra.Command, args []string) error {
 
 	// Initialize inspector server with embedded SPA.
 	inspectorSrv := inspector.NewServer(inspectorPort, memStore, web.FS())
+
+	// replayBroadcast is used by the replayer to broadcast + print new requests.
+	replayBroadcast := func(req *store.CapturedRequest) {
+		inspectorSrv.Hub().Broadcast(inspector.WSEvent{
+			Type: "request:new",
+			Data: req,
+		})
+		ui.PrintRequest(req)
+	}
+
+	// Initialize replayer for replay and mock webhook support.
+	replayer := replay.New(targetURL, memStore, replayBroadcast)
+	inspectorSrv.SetReplayer(replayer)
 
 	// forwardAndBroadcast forwards a captured request to the local dev server,
 	// broadcasts to inspector, and prints to terminal.
