@@ -8,6 +8,7 @@ require (
 	github.com/rs/zerolog v1.34.0
 	github.com/spf13/cobra v1.9.1
 	golang.org/x/net v0.52.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
