@@ -7,6 +7,7 @@ import StatusBadge from "~/components/StatusBadge";
 import HeadersTable from "~/components/HeadersTable";
 import BodyViewer from "~/components/BodyViewer";
 import ReplayPanel from "~/components/ReplayPanel";
+import SignatureVerifier from "~/components/SignatureVerifier";
 
 function formatDuration(ns: number): string {
   const ms = ns / 1_000_000;
@@ -15,7 +16,7 @@ function formatDuration(ns: number): string {
   return `${(ms / 1000).toFixed(1)}s`;
 }
 
-type Tab = "request" | "response" | "replay";
+type Tab = "request" | "response" | "replay" | "signature";
 
 export default function RequestDetail() {
   const { id } = useParams();
@@ -112,6 +113,7 @@ export default function RequestDetail() {
       ) : undefined,
     },
     { id: "replay", label: "Replay" },
+    { id: "signature", label: "Signature" },
   ];
 
   return (
@@ -313,9 +315,11 @@ export default function RequestDetail() {
               </p>
             </div>
           )
-        ) : (
-          /* Replay tab */
+        ) : tab === "replay" ? (
           <ReplayPanel request={request} />
+        ) : (
+          /* Signature tab */
+          <SignatureVerifier request={request} />
         )}
       </div>
     </div>
