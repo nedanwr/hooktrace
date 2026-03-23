@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/nedanwr/hooktrace/apps/cli/internal/replay"
 	"github.com/nedanwr/hooktrace/apps/cli/internal/store"
 	"github.com/rs/zerolog/log"
 )
@@ -71,6 +72,11 @@ func NewServer(port int, s store.Store, webFS fs.FS) *Server {
 	}
 
 	return srv
+}
+
+// SetReplayer configures the replay/mock handler for the inspector API.
+func (s *Server) SetReplayer(r *replay.Replayer) {
+	s.api.SetReplayer(r)
 }
 
 // Port returns the inspector server port.
