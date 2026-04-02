@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/nedanwr/hooktrace/apps/cli/internal/diff"
-	"github.com/nedanwr/hooktrace/apps/cli/internal/replay"
-	"github.com/nedanwr/hooktrace/apps/cli/internal/signature"
-	"github.com/nedanwr/hooktrace/apps/cli/internal/store"
+	"github.com/nedanwr/tunnl/apps/cli/internal/diff"
+	"github.com/nedanwr/tunnl/apps/cli/internal/replay"
+	"github.com/nedanwr/tunnl/apps/cli/internal/signature"
+	"github.com/nedanwr/tunnl/apps/cli/internal/store"
 )
 
 // API provides REST API handlers for the inspector.

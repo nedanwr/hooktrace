@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nedanwr/hooktrace/apps/cli/internal/store"
+	"github.com/nedanwr/tunnl/apps/cli/internal/store"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/net/websocket"
 )
@@ -290,7 +290,7 @@ func (c *Client) handleRequest(data interface{}) {
 		respData.StatusCode = 502
 		respData.Headers = http.Header{
 			"Content-Type":      {"application/json"},
-			"X-Hooktrace-Error": {"no response from local server"},
+			"X-Tunnl-Error": {"no response from local server"},
 		}
 	}
 
@@ -353,7 +353,7 @@ func (c *Client) PublicURL() string {
 	return c.publicURL
 }
 
-// ExtractSubdomain extracts the subdomain from a public URL like "https://abc123.hooktrace.dev".
+// ExtractSubdomain extracts the subdomain from a public URL like "https://abc123.usetunnl.com".
 func ExtractSubdomain(publicURL string) string {
 	// Strip protocol.
 	host := publicURL

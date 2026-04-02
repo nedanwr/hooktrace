@@ -1,4 +1,4 @@
-module github.com/nedanwr/hooktrace/apps/cli
+module github.com/nedanwr/tunnl/apps/cli
 
 go 1.25.0
 

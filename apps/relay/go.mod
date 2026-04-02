@@ -1,4 +1,4 @@
-module github.com/nedanwr/hooktrace/apps/relay
+module github.com/nedanwr/tunnl/apps/relay
 
 go 1.25.0
 

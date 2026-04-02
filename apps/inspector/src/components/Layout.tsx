@@ -37,7 +37,7 @@ export default function Layout() {
                 </svg>
               </div>
               <span className="font-semibold text-[15px] text-zinc-100 tracking-tight">
-                HookTrace
+                Tunnl
               </span>
             </Link>
 

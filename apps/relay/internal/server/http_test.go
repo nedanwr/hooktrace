@@ -3,22 +3,22 @@ package server
 import (
 	"testing"
 
-	"github.com/nedanwr/hooktrace/apps/relay/internal/tunnel"
+	"github.com/nedanwr/tunnl/apps/relay/internal/tunnel"
 )
 
 func TestExtractSubdomain(t *testing.T) {
-	s := New("8080", "hooktrace.dev", tunnel.NewManager())
+	s := New("8080", "usetunnl.com", tunnel.NewManager())
 
 	tests := []struct {
 		host     string
 		expected string
 	}{
-		{"abc123.hooktrace.dev", "abc123"},
-		{"abc123.hooktrace.dev:8080", "abc123"},
-		{"hooktrace.dev", ""},
-		{"hooktrace.dev:8080", ""},
-		{"www.hooktrace.dev", "www"},
-		{"sub.sub.hooktrace.dev", ""}, // Nested subdomains not allowed.
+		{"abc123.usetunnl.com", "abc123"},
+		{"abc123.usetunnl.com:8080", "abc123"},
+		{"usetunnl.com", ""},
+		{"usetunnl.com:8080", ""},
+		{"www.usetunnl.com", "www"},
+		{"sub.sub.usetunnl.com", ""}, // Nested subdomains not allowed.
 		{"other.com", ""},
 		{"", ""},
 	}

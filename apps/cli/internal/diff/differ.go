@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/nedanwr/hooktrace/apps/cli/internal/store"
+	"github.com/nedanwr/tunnl/apps/cli/internal/store"
 )
 
 // DiffResult holds the complete structured diff between two captured requests.

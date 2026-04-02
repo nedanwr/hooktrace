@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/nedanwr/hooktrace/apps/cli/internal/store"
+	"github.com/nedanwr/tunnl/apps/cli/internal/store"
 )
 
 var (
@@ -24,9 +24,9 @@ var (
 	tunnelColor    = color.New(color.FgGreen, color.Bold)
 )
 
-// PrintBanner prints the HookTrace startup banner.
+// PrintBanner prints the Tunnl startup banner.
 func PrintBanner(capturePort int, targetPort int) {
-	logoColor.Println("\n  ⚡ HookTrace")
+	logoColor.Println("\n  ⚡ Tunnl")
 	fmt.Println()
 	fmt.Printf("  Capture URL:   http://localhost:%d\n", capturePort)
 	fmt.Printf("  Forwarding to: http://localhost:%d\n", targetPort)

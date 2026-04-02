@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nedanwr/hooktrace/apps/cli/internal/store"
+	"github.com/nedanwr/tunnl/apps/cli/internal/store"
 )
 
 func TestDiff_IdenticalRequests(t *testing.T) {

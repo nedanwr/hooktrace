@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/nedanwr/hooktrace/apps/cli/cmd"
+	"github.com/nedanwr/tunnl/apps/cli/cmd"
 )
 
 func main() {

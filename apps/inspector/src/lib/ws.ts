@@ -7,13 +7,13 @@ export function createWSConnection(onMessage: WSMessageHandler): WebSocket {
   const ws = new WebSocket(url);
 
   ws.onopen = () => {
-    console.log("[HookTrace] WebSocket connected");
+    console.log("[Tunnl] WebSocket connected");
   };
 
   ws.onmessage = onMessage;
 
   ws.onclose = (e) => {
-    console.log("[HookTrace] WebSocket disconnected, reconnecting...", e.code);
+    console.log("[Tunnl] WebSocket disconnected, reconnecting...", e.code);
     // Reconnect after a short delay.
     setTimeout(() => {
       createWSConnection(onMessage);
@@ -21,7 +21,7 @@ export function createWSConnection(onMessage: WSMessageHandler): WebSocket {
   };
 
   ws.onerror = (e) => {
-    console.error("[HookTrace] WebSocket error", e);
+    console.error("[Tunnl] WebSocket error", e);
   };
 
   return ws;

@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/nedanwr/hooktrace/apps/relay/internal/tunnel"
+	"github.com/nedanwr/tunnl/apps/relay/internal/tunnel"
 )
 
 // TestEndToEndTunnel tests the full tunnel flow:

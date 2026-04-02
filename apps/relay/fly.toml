@@ -1,4 +1,4 @@
-app = "hooktrace-relay"
+app = "tunnl-relay"
 primary_region = "iad"
 
 [build]
@@ -6,7 +6,7 @@ primary_region = "iad"
 
 [env]
   PORT = "8080"
-  BASE_DOMAIN = "hooktrace.dev"
+  BASE_DOMAIN = "usetunnl.com"
   LOG_LEVEL = "info"
 
 [http_service]

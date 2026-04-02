@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nedanwr/hooktrace/apps/relay/internal/tunnel"
+	"github.com/nedanwr/tunnl/apps/relay/internal/tunnel"
 	"github.com/rs/zerolog/log"
 )
 
@@ -92,7 +92,7 @@ func (s *Server) handleIncoming(w http.ResponseWriter, r *http.Request) {
 		// No subdomain — serve a simple landing page or 404.
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, `{"service":"hooktrace-relay","domain":"%s"}`, s.baseDomain)
+		fmt.Fprintf(w, `{"service":"tunnl-relay","domain":"%s"}`, s.baseDomain)
 		return
 	}
 
@@ -191,7 +191,7 @@ func (s *Server) handleIncoming(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// extractSubdomain extracts the subdomain from a host like "abc123.hooktrace.dev".
+// extractSubdomain extracts the subdomain from a host like "abc123.usetunnl.com".
 func (s *Server) extractSubdomain(host string) string {
 	// Strip port if present.
 	if idx := strings.LastIndex(host, ":"); idx != -1 {

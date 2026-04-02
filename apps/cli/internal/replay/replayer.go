@@ -11,7 +11,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/nedanwr/hooktrace/apps/cli/internal/store"
+	"github.com/nedanwr/tunnl/apps/cli/internal/store"
 	"github.com/rs/zerolog/log"
 )
 
@@ -163,7 +163,7 @@ func (r *Replayer) send(captured *store.CapturedRequest) error {
 	if err != nil {
 		captured.Response = &store.CapturedResponse{
 			StatusCode: 502,
-			Headers:    http.Header{"X-Hooktrace-Error": {"target unreachable"}},
+			Headers:    http.Header{"X-Tunnl-Error": {"target unreachable"}},
 		}
 		captured.Duration = time.Since(start)
 		return fmt.Errorf("forwarding to %s: %w", r.targetURL, err)

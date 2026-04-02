@@ -6,8 +6,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/nedanwr/hooktrace/apps/relay/internal/server"
-	"github.com/nedanwr/hooktrace/apps/relay/internal/tunnel"
+	"github.com/nedanwr/tunnl/apps/relay/internal/server"
+	"github.com/nedanwr/tunnl/apps/relay/internal/tunnel"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -35,7 +35,7 @@ func main() {
 
 	baseDomain := os.Getenv("BASE_DOMAIN")
 	if baseDomain == "" {
-		baseDomain = "hooktrace.dev"
+		baseDomain = "usetunnl.com"
 	}
 
 	// Initialize tunnel manager.

@@ -9,11 +9,11 @@ func TestExtractSubdomain(t *testing.T) {
 		url      string
 		expected string
 	}{
-		{"https://abc123.hooktrace.dev", "abc123"},
-		{"http://myapp.hooktrace.dev", "myapp"},
-		{"https://test.hooktrace.dev:8080", "test"},
-		{"https://abc123.hooktrace.dev/path", "abc123"},
-		{"https://hooktrace.dev", "hooktrace"},
+		{"https://abc123.usetunnl.com", "abc123"},
+		{"http://myapp.usetunnl.com", "myapp"},
+		{"https://test.usetunnl.com:8080", "test"},
+		{"https://abc123.usetunnl.com/path", "abc123"},
+		{"https://usetunnl.com", "usetunnl"},
 		{"localhost", ""},
 		{"", ""},
 	}

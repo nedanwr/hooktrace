@@ -7,15 +7,15 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/nedanwr/hooktrace/apps/cli/internal/capture"
-	"github.com/nedanwr/hooktrace/apps/cli/internal/config"
-	"github.com/nedanwr/hooktrace/apps/cli/internal/forward"
-	"github.com/nedanwr/hooktrace/apps/cli/internal/inspector"
-	"github.com/nedanwr/hooktrace/apps/cli/internal/replay"
-	"github.com/nedanwr/hooktrace/apps/cli/internal/store"
-	"github.com/nedanwr/hooktrace/apps/cli/internal/tunnel"
-	"github.com/nedanwr/hooktrace/apps/cli/internal/ui"
-	"github.com/nedanwr/hooktrace/apps/cli/web"
+	"github.com/nedanwr/tunnl/apps/cli/internal/capture"
+	"github.com/nedanwr/tunnl/apps/cli/internal/config"
+	"github.com/nedanwr/tunnl/apps/cli/internal/forward"
+	"github.com/nedanwr/tunnl/apps/cli/internal/inspector"
+	"github.com/nedanwr/tunnl/apps/cli/internal/replay"
+	"github.com/nedanwr/tunnl/apps/cli/internal/store"
+	"github.com/nedanwr/tunnl/apps/cli/internal/tunnel"
+	"github.com/nedanwr/tunnl/apps/cli/internal/ui"
+	"github.com/nedanwr/tunnl/apps/cli/web"
 	"github.com/pkg/browser"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -25,21 +25,19 @@ var (
 	targetPort    int
 	capturePort   int
 	inspectorPort int
-	noOpen        bool
-	relayURL      string
-	noTunnel      bool
+	noOpen   bool
+	relayURL string
 )
 
 var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start capturing webhooks and forwarding to your local server",
-	Long: `Starts the HookTrace capture server that listens for incoming webhooks,
+	Long: `Starts the Tunnl capture server that listens for incoming webhooks,
 forwards them to your local dev server, and displays them in the terminal.
 Also starts the web inspector and connects to the relay for a public tunnel URL.
 
 Example:
-  hooktrace start --port 3000
-  hooktrace start --port 3000 --no-tunnel`,
+  tunnl start --port 3000`,
 	RunE: runStart,
 }
 
@@ -49,7 +47,6 @@ func init() {
 	startCmd.Flags().IntVar(&inspectorPort, "inspector-port", 9090, "port for the web inspector")
 	startCmd.Flags().BoolVar(&noOpen, "no-open", false, "don't auto-open the inspector in the browser")
 	startCmd.Flags().StringVar(&relayURL, "relay", "ws://localhost:8080", "relay server URL")
-	startCmd.Flags().BoolVar(&noTunnel, "no-tunnel", false, "disable tunnel connection (local-only mode)")
 	rootCmd.AddCommand(startCmd)
 }
 
@@ -138,27 +135,22 @@ func runStart(cmd *cobra.Command, args []string) error {
 	}()
 
 	// Set up tunnel connection.
-	var tunnelClient *tunnel.Client
-	if !noTunnel {
-		tunnelClient = tunnel.NewClient(relayURL, cfg.ClientID, cfg.Subdomain, processTunnelRequest)
+	tunnelClient := tunnel.NewClient(relayURL, cfg.ClientID, cfg.Subdomain, processTunnelRequest)
 
-		go tunnel.ConnectWithReconnect(tunnelClient, func(publicURL string) {
-			ui.PrintTunnelStatus(publicURL)
+	go tunnel.ConnectWithReconnect(tunnelClient, func(publicURL string) {
+		ui.PrintTunnelStatus(publicURL)
 
-			// Persist the subdomain from the public URL for stable reconnection.
-			subdomain := tunnel.ExtractSubdomain(publicURL)
-			if subdomain != "" && subdomain != cfg.Subdomain {
-				cfg.Subdomain = subdomain
-				if err := cfg.Save(); err != nil {
-					log.Debug().Err(err).Msg("failed to save subdomain to config")
-				}
+		// Persist the subdomain from the public URL for stable reconnection.
+		subdomain := tunnel.ExtractSubdomain(publicURL)
+		if subdomain != "" && subdomain != cfg.Subdomain {
+			cfg.Subdomain = subdomain
+			if err := cfg.Save(); err != nil {
+				log.Debug().Err(err).Msg("failed to save subdomain to config")
 			}
-		})
+		}
+	})
 
-		fmt.Printf("  Tunnel:        connecting...\n")
-	} else {
-		fmt.Printf("  Tunnel:        disabled\n")
-	}
+	fmt.Printf("  Tunnel:        connecting...\n")
 
 	fmt.Println()
 
@@ -178,9 +170,7 @@ func runStart(cmd *cobra.Command, args []string) error {
 	go func() {
 		<-sigCh
 		fmt.Println("\n\n  Shutting down...")
-		if tunnelClient != nil {
-			tunnelClient.Stop()
-		}
+		tunnelClient.Stop()
 		if err := inspectorSrv.Shutdown(); err != nil {
 			log.Error().Err(err).Msg("inspector shutdown error")
 		}

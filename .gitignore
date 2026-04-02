@@ -6,7 +6,7 @@ dist/
 *.tsbuildinfo
 
 # Go
-apps/cli/hooktrace
+apps/cli/tunnl
 *.exe
 *.dll
 *.so

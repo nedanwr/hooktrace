@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/nedanwr/hooktrace/apps/cli/internal/store"
+	"github.com/nedanwr/tunnl/apps/cli/internal/store"
 	"github.com/rs/zerolog/log"
 )
 

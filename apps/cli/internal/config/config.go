@@ -1,4 +1,4 @@
-// Package config manages the persistent CLI configuration stored in ~/.hooktrace/config.yaml.
+// Package config manages the persistent CLI configuration stored in ~/.tunnl/config.yaml.
 package config
 
 import (
@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	configDir  = ".hooktrace"
+	configDir  = ".tunnl"
 	configFile = "config.yaml"
 )
 
@@ -28,7 +28,7 @@ type Config struct {
 	RelayURL string `yaml:"relay_url,omitempty"`
 }
 
-// Load reads the config from ~/.hooktrace/config.yaml.
+// Load reads the config from ~/.tunnl/config.yaml.
 // If the file doesn't exist, a new config with a fresh ClientID is created and saved.
 func Load() (*Config, error) {
 	path, err := configPath()
@@ -67,7 +67,7 @@ func Load() (*Config, error) {
 	return cfg, nil
 }
 
-// Save writes the config to ~/.hooktrace/config.yaml.
+// Save writes the config to ~/.tunnl/config.yaml.
 func (c *Config) Save() error {
 	path, err := configPath()
 	if err != nil {

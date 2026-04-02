@@ -5,7 +5,7 @@ package capture
 import (
 	"sync"
 
-	"github.com/nedanwr/hooktrace/apps/cli/internal/store"
+	"github.com/nedanwr/tunnl/apps/cli/internal/store"
 )
 
 // Listener is a callback invoked when a new request is captured.
