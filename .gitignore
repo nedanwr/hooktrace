@@ -30,3 +30,6 @@ Thumbs.db
 
 # Debug
 *.log
+
+# Internal
+/internal/
