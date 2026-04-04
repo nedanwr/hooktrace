@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans, Instrument_Sans } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 
 import "~/styles/globals.css";
 
@@ -85,36 +86,38 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${dmSans.variable} ${instrumentSans.variable}`}>
       <body className="relative">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "SoftwareApplication",
-              name: "Tunnl",
-              applicationCategory: "DeveloperApplication",
-              operatingSystem: "macOS, Linux, Windows",
-              url: "https://usetunnl.com",
-              description: DESCRIPTION,
-              offers: [
-                {
-                  "@type": "Offer",
-                  price: "0",
-                  priceCurrency: "USD",
-                  name: "Free"
-                },
-                {
-                  "@type": "Offer",
-                  price: "8",
-                  priceCurrency: "USD",
-                  name: "Pro",
-                  billingIncrement: "P1M"
-                }
-              ]
-            })
-          }}
-        />
-        {children}
+        <ClerkProvider>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "SoftwareApplication",
+                name: "Tunnl",
+                applicationCategory: "DeveloperApplication",
+                operatingSystem: "macOS, Linux, Windows",
+                url: "https://usetunnl.com",
+                description: DESCRIPTION,
+                offers: [
+                  {
+                    "@type": "Offer",
+                    price: "0",
+                    priceCurrency: "USD",
+                    name: "Free"
+                  },
+                  {
+                    "@type": "Offer",
+                    price: "8",
+                    priceCurrency: "USD",
+                    name: "Pro",
+                    billingIncrement: "P1M"
+                  }
+                ]
+              })
+            }}
+          />
+          {children}
+        </ClerkProvider>
       </body>
     </html>
   );
