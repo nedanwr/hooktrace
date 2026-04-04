@@ -105,12 +105,13 @@ export function PricingSection() {
               ))}
             </div>
 
-            <a
-              href="#install"
-              className="mt-8 flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 py-3 text-sm font-semibold text-stone-100 transition-colors hover:bg-white/5"
+            <Button
+              asChild
+              variant="outline"
+              className="mt-8 w-full py-3 text-sm font-semibold text-stone-100 hover:bg-white/5"
             >
-              Get Started
-            </a>
+              <a href="#install">Get Started</a>
+            </Button>
           </div>
 
           <div className="relative h-full rounded-xl">
