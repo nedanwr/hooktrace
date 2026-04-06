@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans, Instrument_Sans } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 
+import { Integrations } from "~/integrations";
 import "~/styles/globals.css";
 
 const dmSans = DM_Sans({
@@ -86,7 +87,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${dmSans.variable} ${instrumentSans.variable}`}>
       <body className="relative">
-        <ClerkProvider>
+        <Integrations>
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{
@@ -117,7 +118,7 @@ export default function RootLayout({
             }}
           />
           {children}
-        </ClerkProvider>
+        </Integrations>
       </body>
     </html>
   );
